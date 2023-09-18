@@ -29,7 +29,6 @@ Here is an example of the records section:
 records:
   - name: example.com
     type: A
-    proxied: true
   - name: subdomain.example.com
     type: A
 ```
@@ -75,7 +74,6 @@ credentials:
 records:
   - name: example.com
     type: A
-    proxied: true
   - name: subdomain.example.com
     type: A
 watcher:
