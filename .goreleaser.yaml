@@ -1,0 +1,43 @@
+project_name: goflaresync
+
+builds:
+  - binary: goflaresync
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/darki73/goflaresync/pkg/version.Version={{.Version}} -X github.com/darki73/goflaresync/pkg/version.Commit={{.Commit}} -X github.com/darki73/goflaresync/pkg/version.Date={{.Date}} -X github.com/darki73/goflaresync/pkg/version.Builder=goreleaser
+    goos:
+        - linux
+        - darwin
+        - windows
+    goarch:
+      - amd64
+      - '386'
+      - arm
+      - arm64
+    goarm:
+      - '7'
+      - '6'
+    ignore:
+      - goos: darwin
+        goarch: '386'
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
+changelog:
+  skip: true
+
+archives:
+  - id: goflaresync
+    name_template: '{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE.md
+      - README.md
+
+checksum:
+  name_template: "{{ .ProjectName }}_v{{ .Version }}_checksums.txt"
