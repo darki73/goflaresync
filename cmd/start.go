@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/darki73/goflaresync/pkg/configuration"
 	"github.com/darki73/goflaresync/pkg/log"
+	"github.com/darki73/goflaresync/pkg/service"
 	"github.com/darki73/goflaresync/pkg/watcher"
 	"github.com/spf13/cobra"
 )
@@ -15,6 +16,21 @@ var startCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := initializeConfiguration(); err != nil {
 			log.Fatal(err.Error())
+		}
+
+		manager := service.NewManager()
+		systemManager := manager.GetSystemManager()
+		if systemManager != nil {
+			if err := systemManager.GetProcessIdentifierHandler().HandleApplicationStart(); err != nil {
+				log.Fatal(err.Error())
+			}
+
+			defer func(handler *service.ProcessIdentifierHandler) {
+				err := handler.HandleApplicationStop()
+				if err != nil {
+					log.Fatal(err.Error())
+				}
+			}(systemManager.GetProcessIdentifierHandler())
 		}
 
 		instance := watcher.New()
